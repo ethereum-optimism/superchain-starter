@@ -15,8 +15,8 @@ contract CrossChainIncrementerTest is Relayer, Test {
     CrossChainCounter public counter;
 
     string[] private rpcUrls = [
-        vm.envOr("CHAIN_A_RPC_URL", string("https://interop-alpha-0.optimism.io")),
-        vm.envOr("CHAIN_B_RPC_URL", string("https://interop-alpha-1.optimism.io"))
+        vm.envOr("CHAIN_A_RPC_URL", string("https://interop-rc-alpha-0.optimism.io/")),
+        vm.envOr("CHAIN_B_RPC_URL", string("https://interop-rc-alpha-1.optimism.io/"))
     ];
 
     constructor() Relayer(rpcUrls) {}
