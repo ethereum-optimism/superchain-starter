@@ -14,37 +14,37 @@ contract CrossChainIncrementerTest is Relayer, Test {
     CrossChainCounterIncrementer public incrementer;
     CrossChainCounter public counter;
 
-    constructor()
-        Relayer(
-            vm.envOr("CHAIN_A_RPC_URL", string("https://interop-alpha-0.optimism.io")),
-            vm.envOr("CHAIN_B_RPC_URL", string("https://interop-alpha-1.optimism.io"))
-        )
-    {}
+    string[] private rpcUrls = [
+        vm.envOr("CHAIN_A_RPC_URL", string("https://interop-alpha-0.optimism.io")),
+        vm.envOr("CHAIN_B_RPC_URL", string("https://interop-alpha-1.optimism.io"))
+    ];
+
+    constructor() Relayer(rpcUrls) {}
 
     function setUp() public {
-        vm.selectFork(chainA);
+        vm.selectFork(forkIds[0]);
         incrementer = new CrossChainCounterIncrementer{salt: bytes32(0)}();
         counter = new CrossChainCounter{salt: bytes32(0)}();
 
-        vm.selectFork(chainB);
+        vm.selectFork(forkIds[1]);
         new CrossChainCounterIncrementer{salt: bytes32(0)}();
         new CrossChainCounter{salt: bytes32(0)}();
     }
 
     // Test incrementing from a valid cross-chain message
     function test_increment_crossDomain_succeeds() public {
-        vm.selectFork(chainA);
+        vm.selectFork(forkIds[0]);
 
-        incrementer.increment(chainIdByForkId[chainB], address(counter));
+        incrementer.increment(chainIdByForkId[forkIds[1]], address(counter));
 
         // verify counter has not been incremented on chainB
-        vm.selectFork(chainB);
+        vm.selectFork(forkIds[1]);
         assertEq(counter.number(), 0);
 
         relayAllMessages();
 
         // verify counter has been incremented on chainB
-        vm.selectFork(chainB);
+        vm.selectFork(forkIds[1]);
         assertEq(counter.number(), 1);
     }
 }
