@@ -24,11 +24,9 @@ contract CrossChainIncrementerTest is Relayer, Test {
     function setUp() public {
         vm.selectFork(forkIds[0]);
         incrementer = new CrossChainCounterIncrementer{salt: bytes32(0)}();
-        counter = new CrossChainCounter{salt: bytes32(0)}();
 
         vm.selectFork(forkIds[1]);
-        new CrossChainCounterIncrementer{salt: bytes32(0)}();
-        new CrossChainCounter{salt: bytes32(0)}();
+        counter = new CrossChainCounter{salt: bytes32(0)}();
     }
 
     // Test incrementing from a valid cross-chain message
