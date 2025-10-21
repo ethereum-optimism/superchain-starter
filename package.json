@@ -56,7 +56,7 @@
     "supersim": "0.1.0-alpha.45",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.22.0",
-    "vite": "^6.1.0",
+    "vite": "^6.4.1",
     "wait-port": "^1.1.0"
   }
 }
