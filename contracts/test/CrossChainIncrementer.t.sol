@@ -14,14 +14,21 @@ contract CrossChainIncrementerTest is Relayer, Test {
     CrossChainCounterIncrementer public incrementer;
     CrossChainCounter public counter;
 
+    // Defaults to the supersim chains this repo already runs via mprocs. The
+    // interop-rc-alpha devnet these pointed at has been decommissioned.
     string[] private rpcUrls = [
-        vm.envOr("CHAIN_A_RPC_URL", string("https://interop-rc-alpha-0.optimism.io/")),
-        vm.envOr("CHAIN_B_RPC_URL", string("https://interop-rc-alpha-1.optimism.io/"))
+        vm.envOr("CHAIN_A_RPC_URL", string("http://127.0.0.1:9545")),
+        vm.envOr("CHAIN_B_RPC_URL", string("http://127.0.0.1:9546"))
     ];
 
     constructor() Relayer(rpcUrls) {}
 
     function setUp() public {
+        // CrossL2Inbox rejects validateMessage when tx.gasprice is 0 and basefee
+        // is not, to keep deposits from executing messages. Forge defaults the
+        // gas price to 0, so relaying would look like a deposit.
+        vm.txGasPrice(1 gwei);
+
         vm.selectFork(forkIds[0]);
         incrementer = new CrossChainCounterIncrementer{salt: bytes32(0)}();
 
