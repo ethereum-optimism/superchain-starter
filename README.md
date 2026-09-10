@@ -9,6 +9,12 @@ A lightweight, focused starting point for prototyping/building on the Superchain
 
 <img width="1007" alt="Screenshot 2025-02-17 at 8 09 02 PM" src="https://github.com/user-attachments/assets/af270104-9958-4e0b-8d1f-9b7c099143c9" />
 
+## Examples
+
+This repository is the template. [`examples/`](./examples) holds complete apps built
+from it, each runnable on its own. See the [index](./examples/README.md) for what
+each one shows and which ones currently work.
+
 ## 🚀 Getting started
 
 Get prototyping Superchain apps in under < 1 min! ❤️‍🔥
