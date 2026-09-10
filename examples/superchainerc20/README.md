@@ -107,7 +107,7 @@ A pattern for achieving deterministic addresses is using CREATE2. The CREATE2 de
 A common practice for keeping a stable deployer address across deploys is to use a well known CREATE2 deployer that is available on every chain. Every OP Stack chain includes the following deployers as [preinstalls](https://specs.optimism.io/protocol/preinstalls.html) by default.
 
 - [Create2Deployer](https://specs.optimism.io/protocol/preinstalls.html#create2deployer)
-- [CreateX](https://specs.optimism.io/protocol/preinstalls.html#createx) - this is what super-cli `sup` uses under the hood
+- [CreateX](https://specs.optimism.io/protocol/preinstalls.html#createx) - the CREATE2 factory the deploy script uses to get the same address on every chain
 - [Arachnid's Deterministic Deployment Proxy](https://specs.optimism.io/protocol/preinstalls.html#arachnids-deterministic-deployment-proxy) - note this is the default CREATE2 deployer used by Foundry
 
 #### 2. init code

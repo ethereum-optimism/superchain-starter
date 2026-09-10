@@ -11,10 +11,14 @@ import {CrosschainFlashLoanToken} from "../src/CrosschainFlashLoanToken.sol";
 import {CrosschainFlashLoanBridge} from "../src/CrosschainFlashLoanBridge.sol";
 import {TargetContract} from "../src/TargetContract.sol";
 
-// Example forge script for deploying as an alternative to sup: super-cli (https://github.com/ethereum-optimism/super-cli)
+// Deploys with CREATE2 through CreateX, so every contract gets the same address
+// on every chain in rpcUrls.
 contract Deploy is Script {
-    /// @notice Array of RPC URLs to deploy to, deploy to supersim 901 and 902 by default.
-    string[] private rpcUrls = ["http://localhost:9545", "http://localhost:9546"];
+    /// @notice RPC URLs to deploy to. Defaults to the supersim chains this repo runs.
+    string[] private rpcUrls = [
+        vm.envOr("CHAIN_A_RPC_URL", string("http://127.0.0.1:9545")),
+        vm.envOr("CHAIN_B_RPC_URL", string("http://127.0.0.1:9546"))
+    ];
 
     /// @notice Modifier that wraps a function in broadcasting.
     modifier broadcast() {
@@ -29,9 +33,9 @@ contract Deploy is Script {
 
             console.log("Deploying to RPC: ", rpcUrl);
             vm.createSelectFork(rpcUrl);
-            deployFlashLoanVault();
-            deployCrosschainFlashLoanToken();
-            deployCrosschainFlashLoanBridge();
+            address vault = deployFlashLoanVault();
+            address token = deployCrosschainFlashLoanToken();
+            deployCrosschainFlashLoanBridge(token, vault);
             deployTargetContract();
         }
     }
@@ -46,14 +50,15 @@ contract Deploy is Script {
         addr_ = DeployUtils.deployContract("CrosschainFlashLoanToken", _implSalt(), initCode);
     }
 
-    function deployCrosschainFlashLoanBridge() public broadcast returns (address addr_) {
-        address messenger = 0x820e6303D954E083be1d6051EABC97636A7e468A;
-        address token = 0x0884244AbBe2cCfDBFD413EE67E818707dA286e7;
-        uint256 minGas = 10000000000000000;
+    // Takes the addresses deployed above rather than constants. The constructor is
+    // (token, vault, flatFee, owner), and the constants this used to pass were a
+    // messenger and a token, in the token and vault slots.
+    function deployCrosschainFlashLoanBridge(address _token, address _vault) public broadcast returns (address addr_) {
+        uint256 flatFee = 0.01 ether;
         address owner = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
 
         bytes memory initCode =
-            abi.encodePacked(type(CrosschainFlashLoanBridge).creationCode, abi.encode(messenger, token, minGas, owner));
+            abi.encodePacked(type(CrosschainFlashLoanBridge).creationCode, abi.encode(_token, _vault, flatFee, owner));
         addr_ = DeployUtils.deployContract("CrosschainFlashLoanBridge", _implSalt(), initCode);
     }
 

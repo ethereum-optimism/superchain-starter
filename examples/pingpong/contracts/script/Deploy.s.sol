@@ -7,12 +7,17 @@ import {ICreateX} from "createx/ICreateX.sol";
 
 import {DeployUtils} from "../libraries/DeployUtils.sol";
 import {CrossChainCounter} from "../src/CrossChainCounter.sol";
+import {CrossChainCounterIncrementer} from "../src/CrossChainCounterIncrementer.sol";
 import {RemoteMultisend} from "../src/RemoteMultisend.sol";
 
-// Example forge script for deploying as an alternative to sup: super-cli (https://github.com/ethereum-optimism/super-cli)
+// Deploys with CREATE2 through CreateX, so every contract gets the same address
+// on every chain in rpcUrls.
 contract Deploy is Script {
-    /// @notice Array of RPC URLs to deploy to, deploy to supersim 901 and 902 by default.
-    string[] private rpcUrls = ["http://localhost:9545", "http://localhost:9546"];
+    /// @notice RPC URLs to deploy to. Defaults to the supersim chains this repo runs.
+    string[] private rpcUrls = [
+        vm.envOr("CHAIN_A_RPC_URL", string("http://127.0.0.1:9545")),
+        vm.envOr("CHAIN_B_RPC_URL", string("http://127.0.0.1:9546"))
+    ];
 
     /// @notice Modifier that wraps a function in broadcasting.
     modifier broadcast() {
@@ -28,6 +33,7 @@ contract Deploy is Script {
             console.log("Deploying to RPC: ", rpcUrl);
             vm.createSelectFork(rpcUrl);
             deployCrossChainCounterContract();
+            deployCrossChainCounterIncrementerContract();
             deployRemoteMultisendContract();
         }
     }
@@ -35,6 +41,11 @@ contract Deploy is Script {
     function deployCrossChainCounterContract() public broadcast returns (address addr_) {
         bytes memory initCode = abi.encodePacked(type(CrossChainCounter).creationCode);
         addr_ = DeployUtils.deployContract("CrossChainCounter", _implSalt(), initCode);
+    }
+
+    function deployCrossChainCounterIncrementerContract() public broadcast returns (address addr_) {
+        bytes memory initCode = abi.encodePacked(type(CrossChainCounterIncrementer).creationCode);
+        addr_ = DeployUtils.deployContract("CrossChainCounterIncrementer", _implSalt(), initCode);
     }
 
     function deployRemoteMultisendContract() public broadcast returns (address addr_) {

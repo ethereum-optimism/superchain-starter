@@ -2,7 +2,7 @@
 
 A lightweight, focused starting point for prototyping/building on the Superchain, featuring
 
-- 🛠 [foundry](https://github.com/foundry-rs/foundry), [supersim](https://github.com/ethereum-optimism/supersim), [super-cli](https://github.com/ethereum-optimism/super-cli)
+- 🛠 [foundry](https://github.com/foundry-rs/foundry), [supersim](https://github.com/ethereum-optimism/supersim)
 - 🎨 wagmi, viem
 - [@eth-optimism/viem](https://github.com/ethereum-optimism/ecosystem/tree/main/packages/viem), [@eth-optimism/wagmi](https://github.com/ethereum-optimism/ecosystem/tree/main/packages/wagmi) - viem/wagmi extensions for the Superchain
 - 💡 simple example app - CrossChainCounter
@@ -50,66 +50,45 @@ Start building on the Superchain!
 
 ## Deploying contracts
 
-The starter kit uses `super-cli` (or `sup`) to streamline contract deployment across the Superchain ecosystem. `sup` works great with Foundry projects while eliminating common multichain friction points:
-
-- 🔄 **Foundry Compatible**: Seamlessly works with your existing Foundry setup and artifacts
-- ⛓️ **Multi-Chain**: Deploy to multiple chains with a single command and pre-configured RPCs
-- ⛽ **Gasless Deployments**: Instead of having to bridge to `n` chains
-- 🎯 **Interactive mode**: No more complex command-line arguments
-
-Alternatively, if you want to use Forge scripts directly, follow the multichain deployment example at [`contracts/script/Deploy.s.sol`](contracts/script/Deploy.s.sol)
+Deployment is a Forge script, [`contracts/script/Deploy.s.sol`](contracts/script/Deploy.s.sol). It
+walks a list of RPC URLs and deploys through [CreateX](https://specs.optimism.io/protocol/preinstalls.html#createx)
+with CREATE2, so each contract lands on the same address on every chain. That matters for interop:
+messages are addressed to a contract, and a shared address means the counterpart is where you expect.
 
 ### Deploying
 
-Once you're ready to deploy, start `sup` in interactive mode
+To deploy to your local supersim chains:
 
 ```bash
-pnpm sup
+pnpm deploy:supersim
 ```
 
-Then you can follow the steps to deploy to `supersim` or the `interop-alpha` devnet
+To deploy to the `interop-alpha` devnet:
 
 ```bash
-
-🚀 Deploy Create2 Wizard
-
- ✓  Enter Foundry Project Path ./contracts/
- ✓  Select Contract CrossChainCounter.sol
- ✓  Configure Constructor Arguments
- ✓  Configure Salt ethers phoenix
- ✓  Select Network interop-alpha
- ✓  Select Chains interop-alpha-0, interop-alpha-1
- >  Verify Contract
-
-Press ← to go back
-
- Do you want to verify the contract on the block explorer? Y/n
-
+pnpm deploy:interop-alpha
 ```
 
-### Non-interactive mode
+Both build the contracts first, so there is no separate build step.
 
-You can also skip the interactive mode entirely by passing the necessary arguments
+### Choosing chains and salt
+
+The script reads two environment variables, defaulting to the supersim chains this repo starts:
+
+| Variable | Default |
+|---|---|
+| `CHAIN_A_RPC_URL` | `http://127.0.0.1:9545` |
+| `CHAIN_B_RPC_URL` | `http://127.0.0.1:9546` |
+
+`DEPLOY_SALT` sets the CREATE2 salt, defaulting to `ethers phoenix`. Change it to get a fresh set of
+addresses; keep it to redeploy to the same ones.
 
 ```bash
-pnpm sup deploy create2 --chains supersiml2a,supersiml2b --salt ethers phoenix --forge-artifact-path contracts/out/CrossChainCounter.sol/CrossChainCounter.json --network supersim --private-key 0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a
+CHAIN_A_RPC_URL=https://my-chain-a CHAIN_B_RPC_URL=https://my-chain-b DEPLOY_SALT=my-salt \
+  forge script contracts/script/Deploy.s.sol --root contracts --broadcast --private-key $PRIVATE_KEY
 ```
 
-### `--prepare` mode
-
-To "prepare" a command without running it, run `sup` with the prepare mode. This will print the command instead of running it. Then you can run the prepared command directly to run immediately in non-interactive mode.
-
-```bash
-pnpm sup --prepare
-```
-
-### Make sure to build before deploying
-
-`sup` assumes that your foundry project has already been built. Make sure to build before attempting to deploy
-
-```
-pnpm build:contracts
-```
+To deploy to more than two chains, add entries to `rpcUrls` in the script.
 
 ## 👀 Overview
 
@@ -124,7 +103,6 @@ pnpm build:contracts
 ### Tools
 
 - **[supersim](https://github.com/ethereum-optimism/supersim)**: Local test environment with 1 L1 and multiple L2 chains, includes pre-deployed Superchain contracts
-- **[sup (super-cli)](https://github.com/ethereum-optimism/super-cli)**: Deploy and verify contracts across multiple chains, with sponsored transactions
 - **foundry**: Blazing fast smart contract development framework
 - **wagmi / viem**: Best in class Typescript library for the EVM,
 - **vite / tailwind / shadcn**: Frontend development tools and UI components

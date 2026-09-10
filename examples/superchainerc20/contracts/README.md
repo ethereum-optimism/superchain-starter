@@ -33,19 +33,20 @@ forge test
 
 ### Deploy
 
-Deploy to multiple chains using either:
-
-1. Super CLI (recommended):
+Deploy to every chain the script targets, from the project root:
 
 ```bash
-cd ../ && pnpm sup
+pnpm deploy:supersim
 ```
 
-2. Direct Forge script:
+That runs the Forge script below, which deploys through CreateX with CREATE2 so each contract gets
+the same address on every chain. To run it directly:
 
 ```bash
-forge script script/Deploy.s.sol --rpc-url $RPC_URL --broadcast
+forge script script/Deploy.s.sol --broadcast --private-key $PRIVATE_KEY
 ```
+
+`CHAIN_A_RPC_URL` and `CHAIN_B_RPC_URL` override the target chains, and `DEPLOY_SALT` the salt.
 
 ## Testing
 
