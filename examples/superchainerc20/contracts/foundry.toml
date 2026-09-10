@@ -10,7 +10,8 @@ libs = ["../../../contracts/lib"]
 remappings = [
   "@interop-lib/=../../../contracts/lib/interop-lib/src/",
   "forge-std/=../../../contracts/lib/forge-std/src/",
-  "@solady/=../../../contracts/lib/solady/src/"
+  "@solady/=../../../contracts/lib/solady/src/",
+  "@openzeppelin/contracts/=../../../contracts/lib/openzeppelin-contracts/contracts/"
 ]
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
