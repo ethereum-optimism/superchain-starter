@@ -6,7 +6,8 @@
 > which was removed from the OP Stack in
 > [ethereum-optimism/optimism#19999](https://github.com/ethereum-optimism/optimism/pull/19999).
 > No token bridge has replaced it, so SuperchainERC20 tokens cannot move between
-> chains today. `CrosschainFlashLoanBridge.sol` calls that address directly, and this example has no tests.
+> chains today. `0.1.0-alpha.59` is the last supersim release that still deploys
+> the bridge, so this example will not run locally on anything newer. `CrosschainFlashLoanBridge.sol` calls that address directly, and this example has no tests.
 >
 > It is kept here so the code is not lost. It will be revisited when a token
 > bridge predeploy exists again, and may need rewriting rather than restoring if

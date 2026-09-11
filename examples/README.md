@@ -14,7 +14,9 @@ dependency.
 
 The last two depend on the `SuperchainTokenBridge` predeploy, removed in
 [optimism#19999](https://github.com/ethereum-optimism/optimism/pull/19999) with no
-replacement. Their READMEs explain what that means and when they will be revisited.
+replacement. `0.1.0-alpha.59` is the last supersim release that deploys it, so they
+will not run locally on anything newer. Their READMEs explain what that means and
+when they will be revisited.
 
 Run any example the same way as the root template:
 
