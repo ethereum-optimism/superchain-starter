@@ -7,3 +7,9 @@
 [submodule "contracts/lib/createx"]
 	path = contracts/lib/createx
 	url = https://github.com/pcaversaccio/createx
+[submodule "contracts/lib/solady"]
+	path = contracts/lib/solady
+	url = https://github.com/vectorized/solady
+[submodule "contracts/lib/openzeppelin-contracts"]
+	path = contracts/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts

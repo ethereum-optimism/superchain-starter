@@ -13,4 +13,4 @@ procs:
     shell: pnpm dev:frontend
   deploy-contracts:
     cwd: .
-    shell: pnpm wait-port http://:8420/ready && pnpm deploy:supersim && pnpm deploy:counter-incrementer:supersim
+    shell: pnpm wait-port http://:8420/ready && pnpm deploy:supersim
